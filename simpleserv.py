@@ -21,7 +21,7 @@ def async():
 @twistless.blocking
 def block():
     """A blocking deferred tasklet."""
-    time.sleep(1)
+    return None
 
 
 class Echo(protocol.Protocol):
@@ -32,7 +32,7 @@ class Echo(protocol.Protocol):
         #call the async deferred function in another tasklet
         async()
         #call the blocking deferred
-        block()
+        #block()
         self.transport.write(data)
 
 
