@@ -32,7 +32,7 @@ class Echo(protocol.Protocol):
         #call the async deferred function in another tasklet
         async()
         #call the blocking deferred
-        #block()
+        block()
         self.transport.write(data)
 
 
