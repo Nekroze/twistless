@@ -15,7 +15,7 @@ PROJECTNAME = 'Twistless'
 PROJECTSITE = 'nekroze.eturnilnetwork.com'
 PROJECTDESC = 'A simple to use bridge between stackless python (available in pypy) and the twisted networking library.'
 PROJECTLICENSE = open("LICENSE").read()
-PLATFORMS = ['*nix', 'Windows']
+PLATFORMS = ['Any']
 
 EXTENSIONS = []  # DEFINE YOURSELF if compiled extensions are needed
 
@@ -126,7 +126,7 @@ class PyPiUpload(Command):
             sys.exit(1)
         print('PyPi Upload successful.')
 
-			
+
 vRe = re.compile(r'__version__\s*=\s*(\S+)', re.M)
 data = open('setup.py').read()
 
@@ -152,6 +152,7 @@ setup(
     platforms=PLATFORMS,
     packages=[SOURCE],
     ext_modules = EXTENSIONS,
+    requires=["twisted", "decorator"],
     classifiers=[
         # DEFINE YOURSELF
     ],

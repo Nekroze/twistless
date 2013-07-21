@@ -5,6 +5,7 @@ defereds.
 from __future__ import print_function
 __author__ = 'Taylor "Nekroze" Lawson'
 __email__ = 'nekroze@eturnilnetwork.com'
+from decorator import decorator
 REACTASK = None
 
 
@@ -35,32 +36,28 @@ def __wrapper(d, f, *args, **kwargs):
         print(e, dir(e))
         d.errback(e)
 
-def deferred(f):
+@decorator
+def deferred(f, *args, **kwargs):
     """
     Wrap a a function as a defered tasklet to be seperated from the main
     reactor execution when function called.
     """
-    @wraps(f)
-    def wrapper(*args, **kwargs):
-        d = defer.Deferred()
-        t = sl.tasklet(__wrapper)
-        t(d, f, *args, **kwargs).run()
-        return d
-    return wrapper
+    d = defer.Deferred()
+    t = sl.tasklet(__wrapper)
+    t(d, f, *args, **kwargs).run()
+    return d
 
-def blocking(f):
+@decorator
+def blocking(f, *args, **kwargs):
     """
     Wrap a function like the deferred decorator but call it as a blocking call
     to support synchronous calls in a tasklet outside of the reactor.
     """
-    @wraps(f)
-    def wrapper(*args, **kwargs):
-        f2 = deferred(f)
-        d = f2(*args, **kwargs)
-        if REACTASK != sl.getcurrent() and sl.getcurrent() != sl.getmain():
-            return block_on(d)
-        raise RuntimeError("Cannot block in reactor task")
-    return wrapper
+    f2 = deferred(f)
+    d = f2(*args, **kwargs)
+    if REACTASK != sl.getcurrent() and sl.getcurrent() != sl.getmain():
+        return block_on(d)
+    raise RuntimeError("Cannot block in reactor task")
 
 def block_on(d):
     """
