@@ -7,6 +7,20 @@ __email__ = 'nekroze@eturnilnetwork.com'
 from functools import wraps
 
 
+def _execute(func, args, kwargs):
+    @wraps(func)
+    def execute():
+        """
+        Execute the entry point and create a looping call.
+        """
+        from .utils import REACTASK
+        REACTASK = sl.getcurrent()
+        task.LoopingCall(sl.schedule).start(self.timesched)
+        func(*args, **kwargs)
+    sl.tasklet(execute).run()
+    sl.run()
+
+
 class Twistless(object):
     """
     Wraps the entry point function, this function should setup and run a
@@ -25,15 +39,5 @@ class Twistless(object):
             Calls the wrapped function in a stackless tasklet and sets up a
             looping twisted task to pump the schedueler.
             """
-            @wraps(func)
-            def execute():
-                """
-                Execute the entry point and create a looping call.
-                """
-                from .utils import REACTASK
-                REACTASK = sl.getcurrent()
-                task.LoopingCall(sl.schedule).start(self.timesched)
-                func()
-            sl.tasklet(execute).run()
-            sl.run()
+            _execute(func, args, kwargs)
         return wrapped
