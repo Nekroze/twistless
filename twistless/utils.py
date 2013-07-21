@@ -5,6 +5,7 @@ defereds.
 from __future__ import print_function
 __author__ = 'Taylor "Nekroze" Lawson'
 __email__ = 'nekroze@eturnilnetwork.com'
+REACTASK = None
 
 
 def __filter(d):
@@ -56,7 +57,7 @@ def blocking(f):
     def wrapper(*args, **kwargs):
         f2 = deferred(f)
         d = f2(*args, **kwargs)
-        if reactask != sl.getcurrent() and sl.getcurrent() != sl.getmain():
+        if REACTASK != sl.getcurrent() and sl.getcurrent() != sl.getmain():
             return block_on(d)
         raise RuntimeError("Cannot block in reactor task")
     return wrapper
