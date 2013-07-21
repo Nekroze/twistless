@@ -1,10 +1,7 @@
-twistless Package
-=================
-
 :mod:`twistless` Package
 ------------------------
 
-.. automodule:: twistless.__init__
+.. automodule:: twistless
     :members:
     :undoc-members:
     :show-inheritance:
