@@ -5,6 +5,7 @@ from __future__ import print_function
 __author__ = 'Taylor "Nekroze" Lawson'
 __email__ = 'nekroze@eturnilnetwork.com'
 from functools import wraps
+import stackless as sl
 
 
 def _execute(func, args, kwargs):

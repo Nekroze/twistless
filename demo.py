@@ -2,7 +2,7 @@ from twistless import Twistless
 from twisted.internet import reactor
 
 
-@Twistless
+@Twistless()
 def entry():
     reactor.run()
 
