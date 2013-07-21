@@ -9,7 +9,7 @@ from twisted.internet import task
 import stackless as sl
 
 
-class Twistless(object):
+def Twistless(*args):
     """
     Wraps the entry point function, this function should setup and run a
     twisted reactor.
@@ -17,10 +17,7 @@ class Twistless(object):
     A twisted task will be created to constantly schedule other stackless
     tasklets as often as the timesched argument.
     """
-    def __init__(self, timesched=0.01):
-        self.timesched = timesched
-
-    def __call__(self, func):
+    def _twistless(func):
         @wraps(func)
         def wrapped(*args, **kwargs):
             """
@@ -34,8 +31,14 @@ class Twistless(object):
                 """
                 from .utils import REACTASK
                 REACTASK = sl.getcurrent()
-                task.LoopingCall(sl.schedule).start(self.timesched)
+                task.LoopingCall(sl.schedule).start(timesched)
                 func(*args, **kwargs)
             sl.tasklet(execute)()
             sl.run()
         return wrapped
+    if len(args) == 1 and callable(args[0]):
+        timesched = 0.01
+        return _twistless(args[0])
+    else:
+        timesched = args[0] if len(args) >= 1 else 0.01
+        return _twistless
