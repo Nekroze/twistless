@@ -4,5 +4,5 @@ using stackless tasklets.
 """
 __author__ = 'Taylor "Nekroze" Lawson'
 __email__ = 'nekroze@eturnilnetwork.com'
-from .utils import block_on, deferred, blocking
+from .utils import deferred, blocking
 from .executor import Twistless

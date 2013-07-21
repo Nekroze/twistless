@@ -36,6 +36,15 @@ def __wrapper(d, f, *args, **kwargs):
         print(e, dir(e))
         d.errback(e)
 
+def _block_on(d):
+    """
+    Block on the given deferred and setup a stackless channel as a callback to
+    return later.
+    """
+    chan = sl.channel()
+    d.addBoth( lambda x,y=chan: y.send(x) )
+    return chan.receive()
+
 @decorator
 def deferred(f, *args, **kwargs):
     """
@@ -56,14 +65,5 @@ def blocking(f, *args, **kwargs):
     f2 = deferred(f)
     d = f2(*args, **kwargs)
     if REACTASK != sl.getcurrent() and sl.getcurrent() != sl.getmain():
-        return block_on(d)
+        return _block_on(d)
     raise RuntimeError("Cannot block in reactor task")
-
-def block_on(d):
-    """
-    Block on the given deferred and setup a stackless channel as a callback to
-    return later.
-    """
-    chan = sl.channel()
-    d.addBoth( lambda x,y=chan: y.send(x) )
-    return chan.receive()
