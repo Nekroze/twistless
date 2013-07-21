@@ -32,7 +32,7 @@ def __wrapper(d, f, *args, **kwargs):
     except TaskletExit:
         pass
     except Exception, e:
-        print e, dir(e)
+        print(e, dir(e))
         d.errback(e)
 
 def deferred(f):
