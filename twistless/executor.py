@@ -1,5 +1,6 @@
 """
-Twistless executor.
+Twistless executor that wraps an entry function to perform twistless
+preperation before execution.
 """
 from __future__ import print_function
 __author__ = 'Taylor "Nekroze" Lawson'
@@ -36,6 +37,7 @@ def Twistless(*args):
             sl.tasklet(execute)()
             sl.run()
         return wrapped
+    # Add the timeshed arg if it is not given.
     if len(args) == 1 and callable(args[0]):
         timesched = 0.01
         return _twistless(args[0])
