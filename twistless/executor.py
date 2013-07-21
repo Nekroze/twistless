@@ -5,21 +5,8 @@ from __future__ import print_function
 __author__ = 'Taylor "Nekroze" Lawson'
 __email__ = 'nekroze@eturnilnetwork.com'
 from functools import wraps
+from twisted.internet import task
 import stackless as sl
-
-
-def _execute(func, args, kwargs):
-    @wraps(func)
-    def execute():
-        """
-        Execute the entry point and create a looping call.
-        """
-        from .utils import REACTASK
-        REACTASK = sl.getcurrent()
-        task.LoopingCall(sl.schedule).start(self.timesched)
-        func(*args, **kwargs)
-    sl.tasklet(execute).run()
-    sl.run()
 
 
 class Twistless(object):
@@ -40,5 +27,15 @@ class Twistless(object):
             Calls the wrapped function in a stackless tasklet and sets up a
             looping twisted task to pump the schedueler.
             """
-            _execute(func, args, kwargs)
+            @wraps(func)
+            def execute():
+                """
+                Execute the entry point and create a looping call.
+                """
+                from .utils import REACTASK
+                REACTASK = sl.getcurrent()
+                task.LoopingCall(sl.schedule).start(self.timesched)
+                func(*args, **kwargs)
+            sl.tasklet(execute)()
+            sl.run()
         return wrapped
