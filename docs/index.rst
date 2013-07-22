@@ -29,6 +29,8 @@ Contents:
 
    usage
 
+   changelog
+
 Feedback
 ========
 
