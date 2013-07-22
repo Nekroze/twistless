@@ -20,7 +20,6 @@ twisted reactor being started with stackless support.
 
 .. literalinclude:: ../quickdemo.py
     :language: python
-    :linenos:
 
 Contents:
 
