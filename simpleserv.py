@@ -25,8 +25,10 @@ class Echo(protocol.Protocol):
     """This is just about the simplest possible protocol"""
 
     def dataReceived(self, data):
-        "As soon as any data is received, write it back ASAP. But first setup a
-        function to be called when there is time for it."
+        """
+        As soon as any data is received, write it back ASAP. But first setup a
+        function to be called when there is time for it.
+        """
         #call the async deferred function in another tasklet
         #The server will echo a response and then return to the tasklet
         #schedule which has the async method waiting to be returned to.
