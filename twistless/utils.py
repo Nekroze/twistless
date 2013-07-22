@@ -7,6 +7,7 @@ __author__ = 'Taylor "Nekroze" Lawson'
 __email__ = 'nekroze@eturnilnetwork.com'
 from decorator import decorator
 from twisted.internet import defer
+from twisted.python import failure
 import stackless as sl
 REACTASK = None
 
