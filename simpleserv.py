@@ -14,7 +14,9 @@ from twisted.internet import reactor, protocol
 @twistless.deferred
 def async():
     """A deferred executed in another tasklet."""
+    #Schedule this function to be continued at a later time.
     schedule()
+    #Do something lengthy
     time.sleep(5)
     print("Tasklets!")
 
