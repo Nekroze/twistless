@@ -12,7 +12,7 @@ twisted networking library.
 The underlying implementation is based off of the excelent article by Stephen
 Coursen found here
 http://www.stevecoursen.com/209/stackless-python-meets-twisted-matrix/ and
-was a huge help when writing twistless.
+was a huge help when writing *twistless*.
 
 *Twistless* is designed to give a quick and easy start to using stackless
 python and twisted together. The following shows an overly brief example of a
