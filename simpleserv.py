@@ -6,33 +6,29 @@ The original client will work fine and can be found here
 http://twistedmatrix.com/documents/13.1.0/core/examples/simpleclient.py
 """
 import twistless
-import stackless
+import time
+from stackless import schedule
 from twisted.internet import reactor, protocol
 
 
 @twistless.deferred
 def async():
     """A deferred executed in another tasklet."""
-    time.sleep(1)
-    stackless.schedule()
-    time.sleep(1)
-
-
-@twistless.blocking
-def block():
-    """A blocking deferred tasklet."""
-    return None
+    schedule()
+    time.sleep(5)
+    print("Tasklets!")
 
 
 class Echo(protocol.Protocol):
     """This is just about the simplest possible protocol"""
 
     def dataReceived(self, data):
-        "As soon as any data is received, write it back."
+        "As soon as any data is received, write it back ASAP. But first setup a
+        function to be called when there is time for it."
         #call the async deferred function in another tasklet
+        #The server will echo a response and then return to the tasklet
+        #schedule which has the async method waiting to be returned to.
         async()
-        #call the blocking deferred
-        block()
         self.transport.write(data)
 
 

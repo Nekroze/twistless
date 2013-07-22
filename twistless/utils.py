@@ -64,6 +64,8 @@ def blocking(f, *args, **kwargs):
     """
     Wrap a function like the deferred decorator but call it as a blocking call
     to support synchronous calls in a tasklet outside of the reactor.
+
+    WARNING: Currently does not function.
     """
     f2 = deferred(f)
     d = f2(*args, **kwargs)
