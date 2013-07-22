@@ -12,7 +12,7 @@ import stackless as sl
 DEFAULT_TIMESCHED = 0.001
 
 
-def Twistless(*args):
+def twistless(*args):
     """
     Wraps the entry point function, this function should setup and run a
     twisted reactor.
@@ -21,6 +21,9 @@ def Twistless(*args):
     tasklets as often as the timesched argument.
     """
     def _twistless(func):
+        """
+        Wrap the given function
+        """
         @wraps(func)
         def wrapped(*args, **kwargs):
             """
@@ -32,8 +35,8 @@ def Twistless(*args):
                 """
                 Execute the entry point and create a looping call.
                 """
-                from .utils import REACTASK
-                REACTASK = sl.getcurrent()
+                from .utils import REACTASK as reactor_tasklet
+                reactor_tasklet = sl.getcurrent()
                 task.LoopingCall(sl.schedule).start(timesched)
                 func(*args, **kwargs)
             sl.tasklet(execute)()

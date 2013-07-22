@@ -12,63 +12,67 @@ import stackless as sl
 REACTASK = None
 
 
-def __filter(d):
+def __filter(deferred):
     """
     Filter out the TaskletExit exception that messes with twisted causing
     unhandled defered errors.
     """
-    if isinstance(d, failure.Failure):
-        if isinstance(d.value, TaskletExit):
+    if isinstance(deferred, failure.Failure):
+        if isinstance(deferred.value, sl.TaskletExit):
             print("ignore taskletexit")
             return None
-        return d
-    return d
+        return deferred
+    return deferred
 
-def __wrapper(d, f, *args, **kwargs):
+
+def __wrapper(deferred, func, *args, **kwargs):
     """
     Wraps a function in a defered for tasklet execution.
     """
     try:
-        rv = defer.maybeDeferred(f, *args, **kwargs)
-        rv.addCallback(__filter)
-        rv.addCallback(d.callback)
-        rv.addErrback(__filter)
-    except TaskletExit:
+        mabe = defer.maybeDeferred(func, *args, **kwargs)
+        mabe.addCallback(__filter)
+        mabe.addCallback(deferred.callback)
+        mabe.addErrback(__filter)
+    except sl.TaskletExit:
         pass
-    except Exception, e:
-        print(e, dir(e))
-        d.errback(e)
+    except Exception as exc:
+        print(exc, dir(exc))
+        deferred.errback(exc)
 
-def _block_on(d):
+
+def _block_on(deferred):
     """
     Block on the given deferred and setup a stackless channel as a callback to
     return later.
     """
     chan = sl.channel()
-    d.addBoth( lambda x,y=chan: y.send(x) )
+    deferred.addBoth(lambda x, y=chan: y.send(x))
     return chan.receive()
 
+
 @decorator
-def deferred(f, *args, **kwargs):
+def tasklet(func, *args, **kwargs):
     """
     Wrap a a function as a defered tasklet to be seperated from the main
     reactor execution when function called.
     """
-    d = defer.Deferred()
-    t = sl.tasklet(__wrapper)
-    t(d, f, *args, **kwargs).run()
-    return d
+    deferred = defer.Deferred()
+    stasklet = sl.tasklet(__wrapper)
+    stasklet(deferred, func, *args, **kwargs).run()
+    return deferred
+
 
 @decorator
-def blocking(f, *args, **kwargs):
+def blocking(func, *args, **kwargs):
     """
     Wrap a function like the deferred decorator but call it as a blocking call
     to support synchronous calls in a tasklet outside of the reactor.
 
     WARNING: Currently does not function.
     """
-    f2 = deferred(f)
-    d = f2(*args, **kwargs)
+    func2 = tasklet(func)
+    deferred = func2(*args, **kwargs)
     if REACTASK != sl.getcurrent() and sl.getcurrent() != sl.getmain():
-        return _block_on(d)
+        return _block_on(deferred)
     raise RuntimeError("Cannot block in reactor task")

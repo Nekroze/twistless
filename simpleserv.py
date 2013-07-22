@@ -5,13 +5,13 @@ documentation.
 The original client will work fine and can be found here
 http://twistedmatrix.com/documents/13.1.0/core/examples/simpleclient.py
 """
-import twistless
 import time
+from twistless import twistless, tasklet
 from stackless import schedule
 from twisted.internet import reactor, protocol
 
 
-@twistless.deferred
+@tasklet
 def async():
     """A deferred executed in another tasklet."""
     #Schedule this function to be continued at a later time.
@@ -36,12 +36,12 @@ class Echo(protocol.Protocol):
         self.transport.write(data)
 
 
-@twistless.Twistless
+@twistless
 def main():
     """This runs the protocol on port 8000"""
     factory = protocol.ServerFactory()
     factory.protocol = Echo
-    reactor.listenTCP(8000,factory)
+    reactor.listenTCP(8000, factory)
     reactor.run()
 
 

@@ -1,8 +1,8 @@
-from twistless import Twistless
+from twistless import twistless
 from twisted.internet import reactor
 
 
-@Twistless
+@twistless
 def entry():
     reactor.run()
 
