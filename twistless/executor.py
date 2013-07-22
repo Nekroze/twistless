@@ -9,6 +9,8 @@ from functools import wraps
 from twisted.internet import task
 import stackless as sl
 
+DEFAULT_TIMESCHED = 0.001
+
 
 def Twistless(*args):
     """
@@ -39,8 +41,8 @@ def Twistless(*args):
         return wrapped
     # Add the timeshed arg if it is not given.
     if len(args) == 1 and callable(args[0]):
-        timesched = 0.01
+        timesched = DEFAULT_TIMESCHED
         return _twistless(args[0])
     else:
-        timesched = args[0] if len(args) >= 1 else 0.01
+        timesched = args[0] if len(args) >= 1 else DEFAULT_TIMESCHED
         return _twistless
